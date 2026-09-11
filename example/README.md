@@ -47,7 +47,44 @@ Network chunks never align with event boundaries in reality either. A parser
 that assumes one chunk equals one event drops tokens and produces JSON errors
 under load.
 
-## 2. React Native app
+## 2. Live test against real endpoints
+
+```sh
+npm run build
+npm run test:live
+```
+
+**Part 1 needs no credentials.** It streams from Wikimedia EventStreams, a
+public production SSE service, which exercises the parser against real network
+chunking at volume:
+
+```
+✅ connected
+   40 events in 2.3s, 50.5 kB
+✅ 0 JSON errors — events reassembled correctly
+✅ every event carried an id: field (resume works)
+```
+
+Zero JSON errors is the result that matters. Real TCP reads split events at
+arbitrary points; a parser that assumes one chunk is one event fails here.
+
+**Part 2 runs if a provider key is in the environment.** The key is read from
+the environment and never printed:
+
+```sh
+OPENROUTER_API_KEY=sk-or-... npm run test:live    # free models available
+ZHIPU_API_KEY=...            npm run test:live
+GROQ_API_KEY=gsk_...         npm run test:live
+OPENAI_API_KEY=sk-...        npm run test:live
+```
+
+Ollama running locally is detected automatically and tested over NDJSON.
+
+It asserts the response arrives in **more than one chunk** — a single chunk
+means the endpoint buffered rather than streamed, which is a real failure worth
+catching.
+
+## 3. React Native app
 
 `App.tsx` is a chat screen with a typing effect and a working stop button.
 

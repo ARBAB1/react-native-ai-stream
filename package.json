@@ -28,7 +28,8 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "prepublishOnly": "npm run build",
-    "demo": "node example/node-demo.cjs"
+    "demo": "node example/node-demo.cjs",
+    "test:live": "node example/live-test.cjs"
   },
   "keywords": [
     "react-native",

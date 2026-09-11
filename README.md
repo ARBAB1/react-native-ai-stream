@@ -225,6 +225,16 @@ const gemini: ChunkAdapter = (event) => {
 
 Use `@ai-sdk/react` on the web. This is the React Native side.
 
+## Examples
+
+```sh
+npm run demo        # real local SSE server, no simulator needed
+```
+
+Exercises token streaming, an event split across network writes, cancellation,
+reconnection with backoff, and non-chat live updates. See
+[`example/`](./example) for the React Native chat screen.
+
 ## Development
 
 ```sh

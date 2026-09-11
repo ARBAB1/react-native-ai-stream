@@ -5,8 +5,8 @@
       "ES2020",
       "DOM"
     ],
-    "module": "ESNext",
-    "moduleResolution": "Bundler",
+    "module": "CommonJS",
+    "moduleResolution": "Node",
     "jsx": "react-jsx",
     "declaration": true,
     "strict": true,

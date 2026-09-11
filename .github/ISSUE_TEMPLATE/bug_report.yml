@@ -1,0 +1,32 @@
+name: Bug report
+description: Something is not working as documented
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time. ⚠️ **Redact any API keys** before pasting request or stream output.
+  - type: textarea
+    attributes:
+      label: What happened
+      description: What you expected, and what happened instead.
+    validations: { required: true }
+  - type: dropdown
+    attributes:
+      label: Wire format
+      options: ["SSE (text/event-stream)", "NDJSON (application/x-ndjson)", "Not sure"]
+    validations: { required: true }
+  - type: textarea
+    attributes:
+      label: Raw stream sample
+      description: "A few lines from `curl -N <your-url>`, with keys redacted."
+      render: text
+  - type: input
+    attributes:
+      label: Provider / endpoint
+      placeholder: "OpenAI, Anthropic, Ollama, own backend…"
+  - type: input
+    attributes:
+      label: Versions
+      placeholder: "react-native-ai-stream 0.1.0, React Native 0.7x, Expo SDK xx"
+    validations: { required: true }

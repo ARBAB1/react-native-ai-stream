@@ -275,6 +275,27 @@ npm run typecheck
 npm run build
 ```
 
+## Contributing
+
+Issues and pull requests are welcome — see
+[CONTRIBUTING.md](./CONTRIBUTING.md).
+
+Most useful right now: **adapters for more providers** (Gemini, Cohere,
+Bedrock — an adapter is a few lines), **failing tests for streams this
+mishandles**, and **reports of how it behaves on your React Native version**.
+
+```sh
+git clone https://github.com/ARBAB1/react-native-ai-stream.git
+cd react-native-ai-stream && npm install && npm test
+```
+
+## Author
+
+**Syed Arbab Ali Shah** — [github.com/ARBAB1](https://github.com/ARBAB1)
+
+Built after hitting the same problem on several React Native apps: streaming
+an AI response, or a live order status, with no maintained way to do it.
+
 ## License
 
-MIT
+MIT © [Syed Arbab Ali Shah](https://github.com/ARBAB1)

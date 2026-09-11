@@ -1,0 +1,18 @@
+name: Provider adapter
+description: Request or contribute support for another AI provider
+labels: [adapter]
+body:
+  - type: input
+    attributes:
+      label: Provider
+      placeholder: "Gemini, Cohere, Bedrock…"
+    validations: { required: true }
+  - type: textarea
+    attributes:
+      label: A real chunk from its stream
+      description: "One or two raw chunks, keys redacted. This is what an adapter is written against."
+      render: text
+    validations: { required: true }
+  - type: input
+    attributes:
+      label: Docs link

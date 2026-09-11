@@ -2,7 +2,7 @@
 
 [![npm](https://img.shields.io/npm/v/react-native-ai-stream.svg)](https://www.npmjs.com/package/react-native-ai-stream)
 [![license](https://img.shields.io/badge/license-MIT-blue.svg)](./LICENSE)
-[![types](https://img.shields.io/npm/types/react-native-ai-stream.svg)](./src/types.ts)
+[![types](https://img.shields.io/badge/types-TypeScript-blue.svg)](./src/types.ts)
 [![zero deps](https://img.shields.io/badge/dependencies-0-brightgreen.svg)](./package.json)
 
 **Stream AI responses and live updates in React Native.**

@@ -5,12 +5,17 @@
 [![types](https://img.shields.io/npm/types/react-native-ai-stream.svg)](./src/types.ts)
 [![zero deps](https://img.shields.io/badge/dependencies-0-brightgreen.svg)](./package.json)
 
-**Streaming for React Native — AI responses, live updates, progress.**
+**Stream AI responses and live updates in React Native.**
+
+A maintained **Server-Sent Events (SSE)** and **NDJSON** client for React
+Native and Expo — the `EventSource` that React Native never shipped. Stream
+ChatGPT-style responses token by token from **OpenAI**, **Anthropic**,
+**Gemini**, **Groq** or a local **Ollama** model, or replace polling with live
+order tracking, progress bars and notifications.
 
 React Native has no `EventSource`, and its `fetch` buffers the whole response
-before handing it to you. So there is no built-in way to receive data as it
-arrives. This is that, with reconnection, cancellation and hooks for OpenAI and
-Anthropic.
+before handing it to you, so there is no built-in way to receive data as it
+arrives. This is that — with reconnection, cancellation and React hooks.
 
 ```tsx
 const { messages, send, isStreaming, stop } = useChatStream({

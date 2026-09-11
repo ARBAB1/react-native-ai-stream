@@ -1,0 +1,37 @@
+{
+  "name": "react-native-ai-stream",
+  "version": "0.1.0",
+  "description": "Server-Sent Events and AI response streaming for React Native. POST support, automatic reconnection with backoff, cancellation, and hooks for OpenAI and Anthropic. Zero dependencies.",
+  "main": "lib/index.js",
+  "types": "lib/index.d.ts",
+  "exports": {
+    ".": { "types": "./lib/index.d.ts", "default": "./lib/index.js" },
+    "./react": { "types": "./lib/react.d.ts", "default": "./lib/react.js" }
+  },
+  "files": ["lib", "src", "!src/**/*.test.ts", "README.md", "LICENSE", "CHANGELOG.md"],
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "prepublishOnly": "npm run build"
+  },
+  "keywords": [
+    "react-native", "sse", "server-sent-events", "eventsource", "streaming",
+    "ai", "openai", "anthropic", "chatgpt", "chat", "stream", "llm",
+    "typescript", "expo", "react", "hooks", "realtime"
+  ],
+  "license": "MIT",
+  "sideEffects": false,
+  "author": "Syed Arbab Ali Shah <syedarbabalishah@gmail.com>",
+  "repository": { "type": "git", "url": "git+https://github.com/ARBAB1/react-native-ai-stream.git" },
+  "bugs": { "url": "https://github.com/ARBAB1/react-native-ai-stream/issues" },
+  "homepage": "https://github.com/ARBAB1/react-native-ai-stream#readme",
+  "peerDependencies": { "react": ">=17.0.0" },
+  "peerDependenciesMeta": { "react": { "optional": true } },
+  "devDependencies": {
+    "@types/react": "^19.0.0",
+    "typescript": "^5.6.0",
+    "vitest": "^2.1.0"
+  }
+}

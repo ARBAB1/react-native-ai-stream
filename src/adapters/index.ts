@@ -51,7 +51,25 @@ export const text: ChunkAdapter = (event) => {
   return event.data ? { text: event.data } : null;
 };
 
-export const adapters = { openai, anthropic, text };
+/**
+ * Ollama and other local model servers, which stream NDJSON:
+ *   {"model":"llama3","response":"Hel","done":false}
+ *   {"response":"","done":true}
+ *
+ * Pair with `format: 'ndjson'`.
+ */
+export const ollama: ChunkAdapter = (event) => {
+  const json = parse(event);
+  if (!json) return null;
+  if (json.done === true) return { done: true };
+
+  // /api/generate uses `response`; /api/chat nests it under `message`.
+  const message = json.message as { content?: string } | undefined;
+  const chunk = (json.response as string | undefined) ?? message?.content;
+  return typeof chunk === 'string' && chunk.length > 0 ? { text: chunk } : null;
+};
+
+export const adapters = { openai, anthropic, text, ollama };
 
 export type AdapterName = keyof typeof adapters;
 

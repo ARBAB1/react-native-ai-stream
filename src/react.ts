@@ -1,7 +1,13 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { resolveAdapter, type AdapterName } from './adapters';
 import { EventStream, type EventStreamOptions } from './client';
-import type { ChunkAdapter, ConnectionState, Message, StreamEvent } from './types';
+import type {
+  ChunkAdapter,
+  ConnectionState,
+  Message,
+  StreamEvent,
+  StreamFormat,
+} from './types';
 
 let counter = 0;
 const nextId = () => `m${(counter = (counter + 1) % 1e6)}-${Date.now().toString(36)}`;
@@ -100,6 +106,8 @@ export function useEventStream<T = unknown>(
 export interface UseChatStreamOptions {
   url: string;
   headers?: Record<string, string>;
+  /** Wire format. Use "ndjson" for Ollama and similar local servers. */
+  format?: StreamFormat;
   /** Provider chunk format. Defaults to "openai". */
   adapter?: AdapterName | ChunkAdapter;
   /**
@@ -138,6 +146,7 @@ export function useChatStream(options: UseChatStreamOptions): UseChatStreamResul
   const {
     url,
     headers,
+    format = 'sse',
     adapter = 'openai',
     buildBody,
     model = 'gpt-4o-mini',
@@ -200,6 +209,7 @@ export function useChatStream(options: UseChatStreamOptions): UseChatStreamResul
       const stream = new EventStream(url, {
         method: 'POST',
         headers,
+        format,
         body,
         // A completion is one-shot: a dropped connection mid-answer should not
         // silently replay the whole prompt and bill the user twice.
@@ -236,7 +246,7 @@ export function useChatStream(options: UseChatStreamOptions): UseChatStreamResul
       streamRef.current = stream;
       void stream.connect();
     },
-    [url, headers, adapter, buildBody, model, messages, isStreaming, onFinish, onError],
+    [url, headers, format, adapter, buildBody, model, messages, isStreaming, onFinish, onError],
   );
 
   const reset = useCallback(() => {

@@ -1,6 +1,13 @@
 import { computeBackoff, DEFAULT_RETRY } from './backoff';
+import { NDJSONParser } from './ndjson';
 import { SSEParser } from './parser';
-import type { ConnectionState, RetryPolicy, StreamEvent } from './types';
+import type {
+  ConnectionState,
+  RetryPolicy,
+  StreamEvent,
+  StreamFormat,
+  StreamParser,
+} from './types';
 
 export interface EventStreamOptions {
   /** HTTP method. Defaults to GET; AI completion endpoints need POST. */
@@ -10,6 +17,12 @@ export interface EventStreamOptions {
   body?: unknown;
 
   retry?: Partial<RetryPolicy>;
+
+  /**
+   * Wire format. `"sse"` (default) for `text/event-stream`; `"ndjson"` for
+   * endpoints that emit one JSON object per line, such as Ollama.
+   */
+  format?: StreamFormat;
 
   /** Called for every parsed event. */
   onEvent?: (event: StreamEvent) => void;
@@ -47,7 +60,8 @@ export class EventStream {
   private readonly retryPolicy: RetryPolicy;
   private readonly fetchImpl: typeof fetch;
 
-  private parser = new SSEParser();
+  private readonly format: StreamFormat;
+  private parser: StreamParser;
   private controller: AbortController | null = null;
   private timer: ReturnType<typeof setTimeout> | null = null;
   private attempt = 0;
@@ -59,11 +73,17 @@ export class EventStream {
     this.options = options;
     this.retryPolicy = { ...DEFAULT_RETRY, ...options.retry };
     this.fetchImpl = options.fetchImpl ?? globalThis.fetch;
+    this.format = options.format ?? 'sse';
+    this.parser = this.createParser();
 
     if (options.signal) {
       if (options.signal.aborted) this.stopped = true;
       else options.signal.addEventListener('abort', () => this.close());
     }
+  }
+
+  private createParser(): StreamParser {
+    return this.format === 'ndjson' ? new NDJSONParser() : new SSEParser();
   }
 
   getState(): ConnectionState {
@@ -78,7 +98,7 @@ export class EventStream {
     this.controller = new AbortController();
 
     const headers: Record<string, string> = {
-      Accept: 'text/event-stream',
+      Accept: this.format === 'ndjson' ? 'application/x-ndjson' : 'text/event-stream',
       'Cache-Control': 'no-cache',
       ...this.options.headers,
     };

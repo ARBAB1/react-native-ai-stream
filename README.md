@@ -61,6 +61,10 @@ npm install react-native-ai-stream
 
 No runtime dependencies. No native modules — works in Expo Go.
 
+📖 **[Full guide](docs/GUIDE.md)** — plain-language explanation, recipes for
+chat, order tracking, progress bars and notifications, server setup, platform
+notes and troubleshooting.
+
 ---
 
 ## AI chat
@@ -92,13 +96,22 @@ export function Chat() {
 }
 ```
 
-**Anthropic** — one word changes:
+**Anthropic, or a local model** — one line changes:
 
 ```tsx
+// Anthropic
 useChatStream({
   url: 'https://api.anthropic.com/v1/messages',
   headers: { 'x-api-key': key, 'anthropic-version': '2023-06-01' },
   adapter: 'anthropic',
+});
+
+// Ollama and other local model servers, which stream NDJSON rather than SSE
+useChatStream({
+  url: 'http://192.168.1.10:11434/api/chat',
+  adapter: 'ollama',
+  format: 'ndjson',
+  model: 'llama3',
 });
 ```
 
@@ -171,6 +184,7 @@ stream.close();
 | **Keep-alives** | `:` comment lines ignored |
 | **Multi-line data** | Joined with newlines, per spec |
 | **CRLF** | Normalised |
+| **Two wire formats** | SSE, and NDJSON for Ollama and local model servers |
 
 ## API
 
@@ -180,7 +194,8 @@ stream.close();
 |---|---|---|
 | `url` | *required* | Completion endpoint |
 | `headers` | — | Auth and provider headers |
-| `adapter` | `'openai'` | `'openai'`, `'anthropic'`, `'text'`, or your own |
+| `adapter` | `'openai'` | `'openai'`, `'anthropic'`, `'ollama'`, `'text'`, or your own |
+| `format` | `'sse'` | `'sse'` for `text/event-stream`, `'ndjson'` for one JSON object per line |
 | `model` | `'gpt-4o-mini'` | Used by the default body builder |
 | `buildBody` | OpenAI shape | Build the request body yourself |
 | `initialMessages` | `[]` | Seed the conversation |
@@ -222,6 +237,17 @@ const gemini: ChunkAdapter = (event) => {
 | [`react-native-sse`](https://www.npmjs.com/package/react-native-sse) | A low-level EventSource polyfill. No React hooks, no provider parsing, no AbortController. Last published **March 2024** |
 | [`@ai-sdk/react`](https://www.npmjs.com/package/@ai-sdk/react) | Excellent — **if you are on the web.** Use it there |
 | Hand-rolling it | ~80 lines of parsing, state and reconnection, in every project |
+
+### Supported endpoints
+
+| | |
+|---|---|
+| **SSE** (default) | OpenAI, Anthropic, Gemini, Groq, Together, OpenRouter, Mistral, your own backend |
+| **NDJSON** (`format: 'ndjson'`) | Ollama and other local model servers |
+| ❌ Not supported | ordinary REST (use `fetch`), WebSocket, GraphQL subscriptions |
+
+Unsure? `curl -N -H "Accept: text/event-stream" <url>` — if you see repeating
+`data:` lines it is SSE; one JSON object per line is NDJSON.
 
 Use `@ai-sdk/react` on the web. This is the React Native side.
 

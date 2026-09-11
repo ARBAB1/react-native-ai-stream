@@ -49,3 +49,17 @@ export interface Message {
   /** True while tokens are still arriving for this message. */
   streaming?: boolean;
 }
+
+/** Wire format of the stream. */
+export type StreamFormat = 'sse' | 'ndjson';
+
+/**
+ * Common shape for the incremental parsers, so the client can swap wire
+ * formats without knowing which one it holds.
+ */
+export interface StreamParser {
+  push(chunk: string): StreamEvent[];
+  end(): StreamEvent | null;
+  readonly lastEventId: string | undefined;
+  readonly serverRetry: number | undefined;
+}

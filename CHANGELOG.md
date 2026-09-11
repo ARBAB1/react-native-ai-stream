@@ -1,5 +1,20 @@
 # Changelog
 
+## [Unreleased]
+
+### Added
+- NDJSON support via `format: 'ndjson'` for endpoints that stream one JSON
+  object per line instead of Server-Sent Events — Ollama and most local model
+  servers work this way
+- `ollama` adapter, covering both `/api/generate` (`response`) and `/api/chat`
+  (`message.content`)
+- `StreamParser` interface so the client can swap wire formats; the transport,
+  reconnection and cancellation are shared between them
+- `docs/GUIDE.md` — plain-language explanation, recipes for chat, order
+  tracking, progress and notifications, server setup, platform notes and
+  troubleshooting
+- 16 more tests, and an NDJSON section in the end-to-end demo
+
 ## [0.1.0] - 2026-09-11
 
 First release.

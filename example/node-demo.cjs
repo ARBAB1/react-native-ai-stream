@@ -10,7 +10,7 @@
  */
 const http = require('http');
 const { EventStream } = require('../lib');
-const { openai } = require('../lib/adapters');
+const { openai, ollama } = require('../lib/adapters');
 
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 const log = (...a) => console.log(...a);
@@ -42,6 +42,19 @@ const server = http.createServer(async (req, res) => {
       await sleep(60);
     }
     res.write('data: [DONE]\n\n');
+    res.end();
+    return;
+  }
+
+  if (url.pathname === '/ollama') {
+    // NDJSON: one JSON object per line, no `data:` prefix, no blank line.
+    const words = ['Local', ' models', ' stream', ' NDJSON', '.'];
+    for (const w of words) {
+      if (res.writableEnded) return;
+      res.write(`${JSON.stringify({ model: 'llama3', response: w, done: false })}\n`);
+      await sleep(60);
+    }
+    res.write(`${JSON.stringify({ response: '', done: true })}\n`);
     res.end();
     return;
   }
@@ -171,6 +184,25 @@ async function main() {
     });
     void s.connect();
   });
+
+  // ---------------------------------------------------------------- 6
+  log('\n=== 6. NDJSON (Ollama and local model servers) ===\n');
+  let local = '';
+  await new Promise((resolve) => {
+    const s = new EventStream(`${base}/ollama`, {
+      format: 'ndjson',
+      onEvent: (e) => {
+        const chunk = ollama(e);
+        if (!chunk) return;
+        if (chunk.done) { s.close(); resolve(); return; }
+        local += chunk.text;
+        process.stdout.write(`\r   "${local}"`);
+      },
+      onDone: resolve,
+    });
+    void s.connect();
+  });
+  log('\n');
 
   log('\nDone.\n');
   server.close();
